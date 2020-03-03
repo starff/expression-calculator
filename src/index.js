@@ -19,63 +19,56 @@ function expressionCalculator(expr) {
       throw new Error ('ExpressionError: Brackets must be paired');
     }
 
-    // избавился от пробелов
-    let rightExpr = expr.replace(/\s/g, ""); 
+    expr = expr.replace(/-/g, " - "); 
+    expr = expr.replace(/\+/g, " + ");
+    expr = expr.replace(/\*/g, " * ");
+    expr = expr.replace(/\//g, " / ");
+    expr = expr.replace(/\(/g, " ( ");
+    expr = expr.replace(/\)/g, " ) ");
+    expr = expr.replace(/\s\s/g, " ").trim();
 
-    //функции вычисления
-    function sum(express) {
-      let items = express.split('+');
-      if(items.length > 1) {
-        return +items[0] + +items[1];
-      };
+    function count(ex) {
+      let arr = ex.split(' ');
+      firstArr = [];
+      secondArr = [];
+      for(let i = 0; i < arr.length; i++) {
+        if (arr[i] == '*') {
+          let mult = +firstArr.pop() * +arr[i+1];
+          i++;
+          firstArr.push(mult);
+        } else if (arr[i] == '/') {
+          if (arr[i+1] == 0) {
+            throw new Error ("TypeError: Division by zero.");
+          }
+          let div = +firstArr.pop() / +arr[i+1];
+          i++;
+          firstArr.push(div);
+        } else {
+          firstArr.push(arr[i]);
+        }
+      }
+      for(let j = 0; j < firstArr.length; j++) {
+        if (firstArr[j] == '+') {
+          let sum = +secondArr.pop() + +firstArr[j+1];
+          j++;
+          secondArr.push(sum);
+        } else if (firstArr[j] == '-') {
+          let min = +secondArr.pop() - +firstArr[j+1];
+          j++;
+          secondArr.push(min);
+        } else {
+          secondArr.push(firstArr[j]);
+        }
+      }
+      return secondArr.join('');
     };
-    function minus(express) {
-      let items = express.split('-');
-      if(items.length > 1) {
-        return +items[0] - +items[1];
-      };
-    };
-    function mult(express) {
-      let items = express.split('*');
-      if(items.length > 1) {
-        return +items[0] * +items[1];
-      };
-    };
-    function div(express) {
-      let items = express.split('/');
-      if(items.length > 1) {
-        return +items[0] / +items[1];
-      };
-    };
-    function count(arr) {
-      arr = arr.replace(/\b\d{0,}\*\b\d{0,}\b/g, mult);
-      arr = arr.replace(/\b\d{0,}\/\b\d{0,}\b/g, div);
-      arr = arr.replace(/\b\d{0,}\-\b\d{0,}\b/g, minus);
-      arr = arr.replace(/\b\d{0,}\+\b\d{0,}\b/g, sum);
-      return +arr;
-    };
+  
 
-    let bracketResult = rightExpr.replace(/\(.*\)/g, count);
+
+    let bracketResult = expr.replace(/\(.*\)/g, count);
     let result = count(bracketResult);
-    // arr.forEach((item, index) => {
-    //   if (index == 0) {
-    //     result = result + +arr[0];
-    //   } else if (item == '+') {
-    //     result = result + +arr[index +  1];
-    //   } else if (item == '-') {
-    //     result = result - +arr[index + 1];
-    //   } else if (item == '*') {
-    //     result = result * +arr[index + 1];
-    //   } else if (item == '/') {
-    //     if (arr[index + 1] == 0) {
-    //       throw new TypeError ('TypeError: Division by zero.');
-    //     } else {
-    //       result = result / +arr[index + 1];
-    //     };
-    //   }
-    // });
 
-    return result;
+    return +result;
 }
 
 module.exports = {
