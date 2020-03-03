@@ -23,11 +23,15 @@ function expressionCalculator(expr) {
     expr = expr.replace(/\+/g, " + ");
     expr = expr.replace(/\*/g, " * ");
     expr = expr.replace(/\//g, " / ");
-    expr = expr.replace(/\(/g, " ( ");
-    expr = expr.replace(/\)/g, " ) ");
+    expr = expr.replace(/\(/g, "( ");
+    expr = expr.replace(/\)/g, " )");
     expr = expr.replace(/\s\s/g, " ").trim();
 
     function count(ex) {
+      if(ex[0] == '(') {
+        ex = ex.replace(/\(/g, ' ');
+        ex = ex.replace(/\)/g, ' ').trim().trim();
+      }
       let arr = ex.split(' ');
       firstArr = [];
       secondArr = [];
