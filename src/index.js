@@ -28,10 +28,11 @@ function expressionCalculator(expr) {
     expr = expr.replace(/\s\s/g, " ").trim();
 
     function count(ex) {
-      if(ex[0] == '(') {
-        ex = ex.replace(/\(/g, ' ');
-        ex = ex.replace(/\)/g, ' ').trim().trim();
+      if(ex[0] == '(' && ex[ex.length - 1] == ')') {
+        ex = ex.replace(/^\(/g, ' ');
+        ex = ex.replace(/\)$/g, ' ').trim().trim();
       }
+      ex = ex.replace(/\(.*\)/g, count);
       let arr = ex.split(' ');
       firstArr = [];
       secondArr = [];
@@ -66,11 +67,22 @@ function expressionCalculator(expr) {
       }
       return secondArr.join('');
     };
-  
+    let re = /[\(\)]/g;
 
-
-    let bracketResult = expr.replace(/\(.*\)/g, count);
-    let result = count(bracketResult);
+    if (re.test(expr)) {
+      expr = expr.replace(/\([\w\+\/\*\-\s\.]*?\)/g, count);
+    }
+    if (re.test(expr)) {
+      expr = expr.replace(/\([\w\+\/\*\-\s\.]*?\)/g, count);
+    }
+    if (re.test(expr)) {
+      expr = expr.replace(/\([\w\+\/\*\-\s\.]*?\)/g, count);
+    }
+    if (re.test(expr)) {
+      expr = expr.replace(/\([\w\+\/\*\-\s\.]*?\)/g, count);
+    }
+    
+    let result = count(expr);
 
     return +result;
 }
